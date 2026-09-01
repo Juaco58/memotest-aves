@@ -1,7 +1,7 @@
 {
-  "name": "Memotest Fauna Argentina",
-  "short_name": "Memotest Fauna",
-  "description": "Juego de memoria sobre la fauna de Argentina",
+  "name": "Memotest - Aves de Argentina",
+  "short_name": "Memotest Aves",
+  "description": "Juego de memoria sobre aves de Argentina",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#eef2f3",
