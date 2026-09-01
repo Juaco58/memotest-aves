@@ -18,7 +18,7 @@ const baseDeAnimales = [
     { nombre: "Loro Barranquero", img: "imagenes/loro_barranquero.jpg" }, { nombre: "Macá Tobiano", img: "imagenes/maca_tobiano.jpg" },{ nombre: "Monjita Blanca", img: "imagenes/monjita_blanca.jpg" },
     { nombre: "Sietecolores", img: "imagenes/naranjero_sietecolores.jpg" }, { nombre: "Ñandú", img: "imagenes/ñandu.jpg" }, { nombre: "Paloma torcaza", img: "imagenes/paloma_torcaza.jpg" }, 
     { nombre: "Picaflor Cometa", img: "imagenes/picaflor_cometa.jpg" }, { nombre: "Pingüino de Magallanes", img: "imagenes/pinguino.jpg" }, { nombre: "Tero", img: "imagenes/tero.jpg" },
-    { nombre: "Tijereta", img: "imagenes/tijereta.jpg" },{ nombre: "Tucán", img: "imagenes/tucan.jpg" }, { nombre: "Zorzal Patagónico", img: "imagenes/zorzal:patagonico.jpg" }
+    { nombre: "Tijereta", img: "imagenes/tijereta.jpg" },{ nombre: "Tucán", img: "imagenes/tucan.jpg" }, { nombre: "Zorzal Patagónico", img: "imagenes/zorzal_patagonico.jpg" }
 ];
 
 let juegoTerminado = false;
