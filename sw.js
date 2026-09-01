@@ -1,7 +1,7 @@
 // ==========================================
-// 🚀 SERVICE WORKER: FAUNA ARGENTINA (v119
+// 🚀 SERVICE WORKER: AVES DE ARGENTINA (v2)
 // ==========================================
-const CACHE_NAME = 'memotest-v119';
+const CACHE_NAME = 'aves-v2';
 
 const assets = [
   '/',
