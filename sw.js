@@ -1,13 +1,13 @@
 // ==========================================
-// 🚀 SERVICE WORKER: AVES DE ARGENTINA (v3)
+// 🚀 SERVICE WORKER: AVES DE ARGENTINA (v4)
 // ==========================================
-const CACHE_NAME = 'aves-v3';
+const CACHE_NAME = 'aves-v4';
 
 const assets = [
   '/',
   'index.html',
   'style.css',
-  'script.js',
+  'script_v2.js',
   'manifest.json',
   'sonidos/voltear.mp3',
   'sonidos/acierto.mp3'
