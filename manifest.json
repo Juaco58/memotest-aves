@@ -1,0 +1,22 @@
+{
+  "name": "Memotest Fauna Argentina",
+  "short_name": "Memotest Fauna",
+  "description": "Juego de memoria sobre la fauna de Argentina",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#eef2f3",
+  "theme_color": "#27ae60",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "imagenes/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "imagenes/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

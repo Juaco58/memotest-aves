@@ -1,0 +1,353 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #eef2f3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.marcador {
+    display: flex;
+    gap: 15px;
+    background: #e0e0e0;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 16px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    transition: background-color 0.5s ease;
+}
+
+.marcador.turno-j1 {
+    background-color: #d6eaf8;
+    border: 2px solid #3498db;
+}
+
+.marcador.turno-j2 {
+    background-color: #d5f5e3;
+    border: 2px solid #2ecc71;
+}
+
+.jugador {
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    color: #7f8c8d;
+    opacity: 0.6;
+}
+
+.jugador.activo-j1 {
+    opacity: 1;
+    transform: scale(1.05);
+    background: #3498db;
+    color: white;
+}
+
+.jugador.activo-j2 {
+    opacity: 1;
+    transform: scale(1.05);
+    background: #2ecc71;
+    color: white;
+}
+
+/* Grilla para PC (Pantallas horizontales): 8 columnas x 5 filas */
+.tablero {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 900px;
+    perspective: 1000px;
+}
+
+.carta {
+    aspect-ratio: 1;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s, opacity 0.5s, visibility 0.5s, z-index 0.5s;
+    cursor: pointer;
+}
+
+.carta.volteada {
+    transform: rotateY(180deg);
+}
+
+.carta.oculta {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.cara {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.reverso {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.frente {
+    background: white;
+    transform: rotateY(180deg);
+    padding: 5px;
+}
+
+/* MODIFICALO PARA QUE QUEDE ASÍ: */
+.frente img {
+    width: 100%;
+    height: 75%;
+    object-fit: cover;
+    border-radius: 4px;
+    image-rendering: smooth; /* Comportamiento premium estándar */
+}
+
+.frente span {
+    font-size: 11px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.zoom-overlay.activo {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.zoom-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 80%;
+    max-height: 80%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+.zoom-overlay.activo .zoom-card {
+    transform: scale(1);
+}
+
+/* MODIFICALO PARA QUE QUEDE ASÍ: */
+.zoom-card img {
+    max-width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
+    border-radius: 8px;
+    image-rendering: smooth; /* Mantiene la nitidez nativa de la IA */
+}
+
+
+.zoom-card h2 {
+    margin-top: 15px;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.btn-reiniciar {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-reiniciar:hover {
+    background-color: #c0392b;
+}
+
+.btn-reiniciar:active {
+    transform: scale(0.95);
+}
+
+/* Efecto de lupa temporal para PC */
+.carta.ampliada-temporal {
+    transform: scale(3.2) rotateY(180deg) !important;
+    z-index: 50;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    
+    /* Corrige el estirado de píxeles en Firefox durante la lupa */
+    will-change: transform;
+    image-rendering: -moz-crisp-edges;
+}
+
+/* RESPONSIVE: Configuración para Celulares / Pantallas Verticales */
+@media (max-width: 767px) {
+    /* Cambia automáticamente a 5 columnas x 8 filas */
+    .tablero { 
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px; 
+    }
+    
+    .frente span { 
+        font-size: 8px; 
+    }
+    
+    .marcador { 
+        font-size: 14px; 
+        padding: 8px 16px; 
+    }
+
+    /* Desactivamos por completo el zoom individual que rompía los bordes en el celu */
+    .carta.ampliada-temporal {
+        transform: rotateY(180deg) !important;
+    }
+
+    /* Nuevo estilo para cuando se mira una sola carta en el centro (sin fondo oscuro) */
+    .zoom-overlay.mirando-carta {
+        background: rgba(0, 0, 0, 0.2); /* Fondo apenas perceptible para no confundir con acierto */
+    }
+
+    .zoom-overlay.mirando-carta .zoom-card {
+        transform: scale(0.85); /* Tamaño más moderado para observar */
+        border: 3px solid #34495e; /* Marco neutro de observación */
+    }
+    
+    /* Estilo exclusivo para cuando se ACERTA la pareja (festejo imponente) */
+    .zoom-overlay.acierto-pareja {
+        background: rgba(0, 0, 0, 0.85); /* Fondo oscuro total de victoria */
+    }
+
+    .zoom-overlay.acierto-pareja .zoom-card {
+        transform: scale(1.1); /* Tarjeta gigante de festejo */
+        border: 4px solid #f1c40f; /* Marco dorado brillante */
+        box-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
+    }
+}
+/* Barra de estado superior ultra compacta */
+.barra-contadores {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px;
+  font-family: sans-serif;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Pantalla de Selección de Modo (1 o 2 jugadores) */
+.pantalla-modo {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #1e3c72;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+.btn-modo {
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+/* Efecto para cartas ACERTADAS (se quedan fijas en su lugar) */
+.carta.acertada {
+  pointer-events: none; /* Ya no se pueden tocar */
+  border: 3px solid #4caf50; /* Un marco verde sutil que indica acierto */
+  transform: scale(0.98);    /* Un toque apenas más chicas para dar efecto de encajadas */
+}
+/* Fuerza a que la carta muestre el frente si ya fue acertada */
+.carta.acertada .cara.reverso {
+    transform: rotateY(180deg) !important;
+}
+
+.carta.acertada .cara.frente {
+    transform: rotateY(0deg) !important;
+}
+
+/* Las cartas se quedan fijas, nítidas y con su marco verde */
+.carta.acertada {
+    pointer-events: none; /* Bloquea los clicks */
+    border: 3px solid #4caf50; /* Marco verde sutil de acierto */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3); /* Un brillito verde abajo */
+}
+/* =======================================================
+   PARCHE GRÁFICO SEGURO EXCLUSIVO PARA FIREFOX EN PC 
+   (No toca el script.js y respeta a Chrome, Edge y Celus)
+   ======================================================= */
+@-moz-document url-prefix() {
+    .zoom-card img {
+        /* Fuerza a la placa de video a recalcular la textura en 3D */
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+        
+        /* Ajuste de interpolación de imagen nativo de Mozilla */
+        image-rendering: -moz-crisp-edges;
+    }
+}
+
