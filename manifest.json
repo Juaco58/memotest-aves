@@ -2,7 +2,7 @@
   "name": "Memotest - Aves de Argentina",
   "short_name": "Memotest Aves",
   "description": "Juego de memoria sobre aves de Argentina",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#eef2f3",
   "theme_color": "#27ae60",
