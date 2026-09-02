@@ -124,23 +124,26 @@ function voltearCarta() {
     // ═══════════════════════════════════════════════════════════════════════
     if (juegoTerminado) {
         if (zoomImg && zoomTexto && zoomOverlay) {
+            // Cancela cualquier cierre automático de la partida
             if (zoomTimeout) {
                 clearTimeout(zoomTimeout);
                 zoomTimeout = null;
             }
             
+            // Carga la imagen y nombre de la carta clickeada
             zoomImg.src = this.querySelector('img').src; 
             zoomTexto.textContent = this.dataset.nombre;
             
-            zoomOverlay.className = 'zoom-overlay activo mirando-carta';
+            // Muestra el overlay usando las clases CSS (limpia primero)
+            zoomOverlay.className = 'zoom-overlay';
+            zoomOverlay.classList.add('activo', 'mirando-carta');
             
-            // El overlay y su tarjeta son puramente visuales, no bloquean clicks
+            // FIX CRÍTICO: El overlay debe ser visible pero NO capturar clicks,
+            // para que el jugador pueda tocar las cartas del tablero debajo.
+            // Usamos setProperty con !important para anular .zoom-overlay.activo { pointer-events: auto }
             zoomOverlay.style.setProperty('pointer-events', 'none', 'important');
-            const zoomCard = zoomOverlay.querySelector('.zoom-card');
-            if (zoomCard) {
-                zoomCard.style.setProperty('pointer-events', 'none', 'important');
-            }
             
+            // Desactivamos el cierre al tocar el overlay
             zoomOverlay.onclick = null;
         }
         return; 
@@ -280,10 +283,9 @@ function verificarFinJuego() {
         clearInterval(intervaloTiempo); 
         
         // ═══════════════════════════════════════════════════════════════════════
-        // FIX CRÍTICO: Las cartas con clase .acertada suelen tener
-        // pointer-events: none en el CSS para evitar clicks durante la partida.
-        // Al terminar el juego, forzamos pointer-events: auto para que el
-        // jugador pueda clickearlas y activar el zoom post-partida.
+        // FIX CRÍTICO: Las cartas .acertada tienen pointer-events: none en CSS.
+        // Al terminar el juego, forzamos pointer-events: auto con !important
+        // para que el jugador pueda clickearlas y activar el zoom post-partida.
         // ═══════════════════════════════════════════════════════════════════════
         document.querySelectorAll('.carta').forEach(carta => {
             carta.style.setProperty('pointer-events', 'auto', 'important');
@@ -298,7 +300,7 @@ function verificarFinJuego() {
                 let mensaje = scoreJ1 > scoreJ2 ? "¡Ganó el Jugador 1!" : (scoreJ2 > scoreJ1 ? "¡Ganó el Jugador 2!" : "¡Es un empate!");
                 alert(`Fin del juego.\n${mensaje}\nMarcador final: ${scoreJ1} a ${scoreJ2}`);
             }
-        }, 100);
+        }, 500);
     }
 }
 
@@ -314,11 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 juegoTerminado = false; 
                 clearInterval(intervaloTiempo);
                 
+                // Cierra el zoom persistente de post-partida y restaura todo
                 if (zoomOverlay) {
-                    zoomOverlay.classList.remove('activo', 'mirando-carta', 'acierto-pareja');
+                    zoomOverlay.className = 'zoom-overlay';
                     zoomOverlay.style.setProperty('pointer-events', '', '');
-                    const zoomCard = zoomOverlay.querySelector('.zoom-card');
-                    if (zoomCard) zoomCard.style.setProperty('pointer-events', '', '');
                     zoomOverlay.onclick = null;
                 }
                 if (zoomTimeout) {
