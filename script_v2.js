@@ -8,17 +8,22 @@ if ('serviceWorker' in navigator) {
 }
 
 const baseDeAnimales = [
-    { nombre: "Aguila Coronada", img: "imagenes/aguila.jpg" },{ nombre: "Benteveo", img: "imagenes/benteveo.jpg" }, { nombre: "Biguá", img: "imagenes/bigua.jpg" },
+    { nombre: "Águila Coronada", img: "imagenes/aguila.jpg" },{ nombre: "Benteveo", img: "imagenes/benteveo.jpg" }, { nombre: "Biguá", img: "imagenes/bigua.jpg" },
     { nombre: "Calandria Grande", img: "imagenes/calandria_grande.jpg" }, { nombre: "Carancho", img: "imagenes/carancho.jpg" }, { nombre: "Cardenal Amarillo", img: "imagenes/cardenal_amarillo.jpg" }, 
     { nombre: "Carpintero Campestre", img: "imagenes/carpintero_campestre.jpg" }, { nombre: "Carpintero Real", img: "imagenes/carpintero_real.jpg" }, { nombre: "Chajá", img: "imagenes/chaja.jpg"}, 
     { nombre: "Chimango", img: "imagenes/chimango.jpg" }, { nombre: "Cóndor Andino", img: "imagenes/condor.jpg" }, { nombre: "Cotorra", img: "imagenes/cotorra.jpg" },
     { nombre: "Flamenco Austral", img: "imagenes/flamenco.jpg" }, { nombre: "Guacamayo Azul", img: "imagenes/guacamayo_azul.jpg" },
     { nombre: "Guacamayo Verde", img: "imagenes/guacamayo_verde.jpg" }, { nombre: "Hornero", img: "imagenes/hornero.jpg" }, { nombre: "Inambú Serrano", img: "imagenes/inambu_serrano.jpg" },
-    { nombre: "Jote Cabeza Negra", img: "imagenes/jote_cabeza_negra.jpg" }, { nombre: "Lechuza de Viscacheras", img: "imagenes/lechuza_de_vizcacheras.jpg" }, 
+    { nombre: "Jote Cabeza Negra", img: "imagenes/jote_cabeza_negra.jpg" }, { nombre: "Lechuza de las Vizcacheras", img: "imagenes/lechuza_de_vizcacheras.jpg" }, 
     { nombre: "Loro Barranquero", img: "imagenes/loro_barranquero.jpg" }, { nombre: "Macá Tobiano", img: "imagenes/maca_tobiano.jpg" },{ nombre: "Monjita Blanca", img: "imagenes/monjita_blanca.jpg" },
     { nombre: "Sietecolores", img: "imagenes/naranjero_sietecolores.jpg" }, { nombre: "Ñandú", img: "imagenes/ñandu.jpg" }, { nombre: "Paloma torcaza", img: "imagenes/paloma_torcaza.jpg" }, 
     { nombre: "Picaflor Cometa", img: "imagenes/picaflor_cometa.jpg" }, { nombre: "Pingüino de Magallanes", img: "imagenes/pinguino.jpg" }, { nombre: "Tero", img: "imagenes/tero.jpg" },
-    { nombre: "Tijereta", img: "imagenes/tijereta.jpg" },{ nombre: "Tucán", img: "imagenes/tucan.jpg" }, { nombre: "Zorzal Patagónico", img: "imagenes/zorzal_patagonico.jpg" }
+    { nombre: "Tijereta", img: "imagenes/tijereta.jpg" },{ nombre: "Tucán", img: "imagenes/tucan.jpg" }, { nombre: "Zorzal Patagónico", img: "imagenes/zorzal_patagonico.jpg" },
+    { nombre: "Caburé Chico", img: "imagenes/cabure_chico.jpg" }, { nombre: "Cardenal Copete Rojo", img: "imagenes/cardenal_copete_rojo.jpg" }, { nombre: "Cigüeña americana", img: "imagenes/cigueña_americana.jpg" },
+    { nombre: "Cormorán Imperial", img: "imagenes/cormoran_imperial.jpg" }, { nombre: "Pingüino Emperador", img: "imagenes/pinguino_emperador.jpg" },
+    { nombre: "Cacholote Castaño", img: "imagenes/cacholote_castaño.jpg" }, { nombre: "Gorrión", img: "imagenes/gorrion.jpg" }, { nombre: "Paloma Manchada", img: "imagenes/paloma_manchada.jpg" },
+    { nombre: "Chingolo", img: "imagenes/chingolo.jpg" }, { nombre: "Churrinche", img: "imagenes/churrinche.jpg" }, { nombre: "Jacana", img: "imagenes/jacana.jpg" },
+    { nombre: "Loica Pampeana", img: "imagenes/loica_pampeana.jpg" }, { nombre: "Sirirí Pampa", img: "imagenes/siriri_pampa.jpg" }, { nombre: "Albatros Ceja Negra", img: "imagenes/albatros_ceja_negra.jpg" }
 ];
 
 let juegoTerminado = false;
