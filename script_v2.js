@@ -33,27 +33,28 @@ const zoomTexto = document.getElementById('zoomTexto');
 const sndVoltear = new Audio('sonidos/voltear.mp3');
 const sndAcierto = new Audio('sonidos/acierto.mp3');
 
+// ───────────────────────────────────────────────
+// FIX 1: arrancarJuegoNuevo ahora arranca un juego JUGABLE (no en modo zoom)
+// y ya no es llamado automáticamente en DOMContentLoaded.
+// ───────────────────────────────────────────────
 function arrancarJuegoNuevo() {
-    // 1. Ocultamos el menú de opciones para ver el tablero directo
     const pantallaModo = document.getElementById('pantalla-modo');
     if (pantallaModo) pantallaModo.style.display = 'none';
-
-    // 2. Generamos el mazo y dibujamos las cartas en el tablero
     prepararMazoDePartida();
     iniciarTablero();
-    
-    // FIX: El juego comienza en estado jugable, NO en modo visualizador final.
-    juegoTerminado = false;
+    juegoTerminado = false;          // ← FIX: antes era 'true', bloqueando todo
 }
 
+// ───────────────────────────────────────────────
+// FIX 2: iniciarConfiguracionModo ahora resetea juegoTerminado.
+// Antes, si venías de una partida terminada, el tablero quedaba congelado.
+// ───────────────────────────────────────────────
 function iniciarConfiguracionModo(modo) {
     modoJuego = modo;
     const pantallaModo = document.getElementById('pantalla-modo');
     if (pantallaModo) pantallaModo.style.display = 'none';
-    
-    // FIX: Resetear el estado de juego terminado al comenzar una partida nueva.
-    juegoTerminado = false;
-    
+
+    juegoTerminado = false;          // ← FIX: reset crucial
     scoreJ1 = 0; scoreJ2 = 0; jugadorActivo = 1; contadorIntentos = 0; tiempoSegundos = 0; bloqueado = false; cartasVolteadas = [];
 
     const p1 = document.getElementById('puntos-j1'), p2 = document.getElementById('puntos-j2');
@@ -122,13 +123,12 @@ function iniciarTablero() {
 }
 
 function voltearCarta() {
-    // 🌟 1. Si el juego terminó, abrimos el zoom real y frenamos el juego
-    if (typeof juegoTerminado !== 'undefined' && juegoTerminado) {
+    // Modo post-partida: solo zoom, no jugar
+    if (juegoTerminado) {
         if (zoomImg && zoomTexto && zoomOverlay) {
             zoomImg.src = this.querySelector('img').src; 
             zoomTexto.textContent = this.dataset.nombre;
             zoomOverlay.className = 'zoom-overlay activo mirando-carta';
-            
             zoomOverlay.onclick = function() {
                 zoomOverlay.classList.remove('activo', 'mirando-carta');
             };
@@ -136,20 +136,149 @@ function voltearCarta() {
         return; 
     }
 
-    // 🔒 2. Filtros normales de la partida
     if (bloqueado || this.classList.contains('volteada') || this.classList.contains('acertada') || cartasVolteadas.length >= 2) return;
-    
+
     sndVoltear.currentTime = 0;
     sndVoltear.play().catch(err => console.log(err));
-    
+
     this.classList.add('volteada'); 
     cartasVolteadas.push(this); 
     this.classList.add('ampliada-temporal');
-    
+
     const cartaParaAchicar = this;
     setTimeout(() => { cartaParaAchicar.classList.remove('ampliada-temporal'); }, 2000);
 
     if (cartasVolteadas.length === 2) { 
         bloqueado = true; 
-        
-        if (window.innerWidth <= 767 || window.innerHeight <= 480 || window.match
+
+        if (window.innerWidth <= 767 || window.innerHeight <= 480 || window.matchMedia("(orientation: landscape)").matches) {
+            ejecutarZoom(this.dataset.nombre, this.querySelector('img').src, 'mirando-carta', 1800);
+        }
+
+        verificarCoincidencia(); 
+    }
+}
+
+function verificarCoincidencia() {
+    const [carta1, carta2] = cartasVolteadas;
+    if (carta1.dataset.nombre === carta2.dataset.nombre) {
+        sndAcierto.currentTime = 0; sndAcierto.play().catch(err => console.log(err));
+        setTimeout(() => {
+            if (window.innerWidth <= 767 || window.innerHeight <= 480 || window.matchMedia("(orientation: landscape)").matches) {
+                ejecutarZoom(carta1.dataset.nombre, carta1.querySelector('img').src, 'acierto-pareja', 3000);
+            }
+        }, 500);
+
+        setTimeout(() => {
+            carta1.classList.add('acertada'); carta2.classList.add('acertada');
+            if (modoJuego === 2) {
+                if (jugadorActivo === 1) { scoreJ1++; } else { scoreJ2++; }
+            } else {
+                scoreJ1++; contadorIntentos++;
+                const ti = document.getElementById('txt-intentos'); if(ti) ti.textContent = contadorIntentos;
+            }
+            actualizarMarcador(); 
+            cartasVolteadas = []; 
+            bloqueado = false; 
+            verificarFinJuego(); 
+        }, 3500); 
+    } else {
+        setTimeout(() => {
+            carta1.classList.remove('volteada'); carta2.classList.remove('volteada');
+            if (modoJuego === 2) { jugadorActivo = (jugadorActivo === 1) ? 2 : 1; }
+            else { contadorIntentos++; const ti = document.getElementById('txt-intentos'); if(ti) ti.textContent = contadorIntentos; }
+            actualizarMarcador(); cartasVolteadas = []; bloqueado = false;
+        }, 3000); 
+    }
+}
+
+function ejecutarZoom(nombre, imgSrc, tipoZoom, tiempoMs) {
+    if (!zoomImg || !zoomTexto || !zoomOverlay) return;
+    zoomImg.src = imgSrc; zoomTexto.textContent = nombre;
+
+    const zoomCard = zoomOverlay.querySelector('.zoom-card');
+    if (window.innerWidth > window.innerHeight) {
+        if (zoomCard) {
+            if (tipoZoom === 'acierto-pareja') {
+                zoomCard.style.setProperty("border", "4px solid #ffeb3b", "important");
+                zoomCard.style.setProperty("box-shadow", "0 0 30px rgba(255, 235, 59, 0.9)", "important");
+            } else {
+                zoomCard.style.setProperty("border", "4px solid transparent", "important");
+                zoomCard.style.setProperty("box-shadow", "0 15px 40px rgba(0,0,0,0.5)", "important");
+            }
+        }
+    } else {
+        if (zoomCard) { zoomCard.style.border = ""; zoomCard.style.boxShadow = ""; }
+    }
+
+    zoomOverlay.className = 'zoom-overlay'; zoomOverlay.classList.add('activo', tipoZoom);
+    setTimeout(() => { zoomOverlay.classList.remove('activo', tipoZoom); }, tiempoMs);
+}
+
+function actualizarMarcador() {
+    const s1 = document.getElementById('score1'), s2 = document.getElementById('score2');
+    if(s1) s1.textContent = scoreJ1; if(s2) s2.textContent = scoreJ2;
+
+    const contenedorMarcador = document.querySelector('.marcador');
+    const divJ1 = document.getElementById('puntos-j1'), divJ2 = document.getElementById('puntos-j2');
+
+    if (modoJuego === 2 && contenedorMarcador && divJ1 && divJ2) {
+        if (jugadorActivo === 1) {
+            contenedorMarcador.className = 'marcador turno-j1'; divJ1.classList.add('activo-j1'); divJ2.classList.remove('activo-j2');
+        } else {
+            contenedorMarcador.className = 'marcador turno-j2'; divJ2.classList.add('activo-j2'); divJ1.classList.remove('activo-j1');
+        }
+    } else if (contenedorMarcador) {
+        // FIX 3: Limpia las clases de turno al volver a modo 1 jugador
+        contenedorMarcador.className = 'marcador';
+        if (divJ1) divJ1.classList.remove('activo-j1');
+        if (divJ2) divJ2.classList.remove('activo-j2');
+    }
+}
+
+// ───────────────────────────────────────────────
+// FIX 4: Solo existe UNA función verificarFinJuego (se eliminó la duplicada).
+// FIX 5: Se eliminaron los 'carta.onclick' redundantes que colisionaban con
+//        el addEventListener de voltearCarta. El zoom post-partida ya lo
+//        maneja voltearCarta() cuando juegoTerminado === true.
+// ───────────────────────────────────────────────
+function verificarFinJuego() {
+    const totalParejasEncontradas = scoreJ1 + scoreJ2;
+
+    if (totalParejasEncontradas === 20) { 
+        juegoTerminado = true; 
+        clearInterval(intervaloTiempo); 
+
+        setTimeout(() => {
+            if (modoJuego === 1) {
+                let mins = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
+                let segs = String(tiempoSegundos % 60).padStart(2, '0');
+                alert(`¡Felicitaciones! Completaste el juego solo.\nTiempo final: ${mins}:${segs}\nIntentos totales: ${contadorIntentos}`);
+            } else {
+                let mensaje = scoreJ1 > scoreJ2 ? "¡Ganó el Jugador 1!" : (scoreJ2 > scoreJ1 ? "¡Ganó el Jugador 2!" : "¡Es un empate!");
+                alert(`Fin del juego.\n${mensaje}\nMarcador final: ${scoreJ1} a ${scoreJ2}`);
+            }
+        }, 100);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // FIX 6: Ya NO llamamos arrancarJuegoNuevo() al cargar.
+    // El menú de inicio permanece visible hasta que el usuario elija modo.
+    const btn1 = document.getElementById('btn-1jugador'), btn2 = document.getElementById('btn-2jugadores');
+    if (btn1) btn1.addEventListener('click', () => iniciarConfiguracionModo(1));
+    if (btn2) btn2.addEventListener('click', () => iniciarConfiguracionModo(2));
+
+    const btnReiniciar = document.getElementById('btn-reiniciar');
+    if (btnReiniciar) {
+        btnReiniciar.addEventListener('click', () => {
+            if (confirm("¿Estás seguro de que querés abandonar y reiniciar el juego?")) {
+                juegoTerminado = false; 
+                clearInterval(intervaloTiempo);
+                const pantallaModo = document.getElementById('pantalla-modo');
+                if (pantallaModo) pantallaModo.style.display = 'flex';
+                if (tablero) tablero.innerHTML = "";
+            }
+        });
+    }
+});
