@@ -25,6 +25,7 @@ let juegoTerminado = false;
 
 let cartasData = [], cartasVolteadas = [], bloqueado = false, modoJuego = 2, jugadorActivo = 1;
 let scoreJ1 = 0, scoreJ2 = 0, contadorIntentos = 0, tiempoSegundos = 0, intervaloTiempo = null, imagenesPrecargadas = [];
+let zoomTimeout = null; // ← FIX: evita que el timeout de la 1ra carta cierre el zoom de la 2da
 
 const tablero = document.getElementById('tablero');
 const zoomOverlay = document.getElementById('zoomOverlay');
@@ -33,28 +34,20 @@ const zoomTexto = document.getElementById('zoomTexto');
 const sndVoltear = new Audio('sonidos/voltear.mp3');
 const sndAcierto = new Audio('sonidos/acierto.mp3');
 
-// ───────────────────────────────────────────────
-// FIX 1: arrancarJuegoNuevo ahora arranca un juego JUGABLE (no en modo zoom)
-// y ya no es llamado automáticamente en DOMContentLoaded.
-// ───────────────────────────────────────────────
 function arrancarJuegoNuevo() {
     const pantallaModo = document.getElementById('pantalla-modo');
     if (pantallaModo) pantallaModo.style.display = 'none';
     prepararMazoDePartida();
     iniciarTablero();
-    juegoTerminado = false;          // ← FIX: antes era 'true', bloqueando todo
+    juegoTerminado = false;
 }
 
-// ───────────────────────────────────────────────
-// FIX 2: iniciarConfiguracionModo ahora resetea juegoTerminado.
-// Antes, si venías de una partida terminada, el tablero quedaba congelado.
-// ───────────────────────────────────────────────
 function iniciarConfiguracionModo(modo) {
     modoJuego = modo;
     const pantallaModo = document.getElementById('pantalla-modo');
     if (pantallaModo) pantallaModo.style.display = 'none';
-
-    juegoTerminado = false;          // ← FIX: reset crucial
+    
+    juegoTerminado = false;
     scoreJ1 = 0; scoreJ2 = 0; jugadorActivo = 1; contadorIntentos = 0; tiempoSegundos = 0; bloqueado = false; cartasVolteadas = [];
 
     const p1 = document.getElementById('puntos-j1'), p2 = document.getElementById('puntos-j2');
@@ -137,24 +130,32 @@ function voltearCarta() {
     }
 
     if (bloqueado || this.classList.contains('volteada') || this.classList.contains('acertada') || cartasVolteadas.length >= 2) return;
-
+    
     sndVoltear.currentTime = 0;
     sndVoltear.play().catch(err => console.log(err));
-
+    
     this.classList.add('volteada'); 
     cartasVolteadas.push(this); 
-    this.classList.add('ampliada-temporal');
-
-    const cartaParaAchicar = this;
-    setTimeout(() => { cartaParaAchicar.classList.remove('ampliada-temporal'); }, 2000);
+    
+    // ───────────────────────────────────────────────
+    // FIX: El zoom ahora se ejecuta para AMBAS cartas, no solo la segunda.
+    // Antes estaba dentro del bloque 'if (cartasVolteadas.length === 2)',
+    // por eso la primera carta solo veía el efecto CSS 'ampliada-temporal'
+    // (pequeña, sin nombre, baja resolución).
+    // ───────────────────────────────────────────────
+    const esPantallaChica = window.innerWidth <= 767 || window.innerHeight <= 480 || window.matchMedia("(orientation: landscape)").matches;
+    
+    if (esPantallaChica) {
+        ejecutarZoom(this.dataset.nombre, this.querySelector('img').src, 'mirando-carta', 1800);
+    } else {
+        // En escritorio retrato, mantenemos el efecto nativo de escala
+        this.classList.add('ampliada-temporal');
+        const cartaParaAchicar = this;
+        setTimeout(() => { cartaParaAchicar.classList.remove('ampliada-temporal'); }, 2000);
+    }
 
     if (cartasVolteadas.length === 2) { 
         bloqueado = true; 
-
-        if (window.innerWidth <= 767 || window.innerHeight <= 480 || window.matchMedia("(orientation: landscape)").matches) {
-            ejecutarZoom(this.dataset.nombre, this.querySelector('img').src, 'mirando-carta', 1800);
-        }
-
         verificarCoincidencia(); 
     }
 }
@@ -168,7 +169,7 @@ function verificarCoincidencia() {
                 ejecutarZoom(carta1.dataset.nombre, carta1.querySelector('img').src, 'acierto-pareja', 3000);
             }
         }, 500);
-
+        
         setTimeout(() => {
             carta1.classList.add('acertada'); carta2.classList.add('acertada');
             if (modoJuego === 2) {
@@ -192,10 +193,22 @@ function verificarCoincidencia() {
     }
 }
 
+// ───────────────────────────────────────────────
+// FIX: Se agregó zoomTimeout para limpiar el timer anterior.
+// Antes, el timeout de la 1ra carta (1800ms) podía cerrar el zoom
+// mientras la 2da carta o la animación de acierto todavía se mostraban.
+// ───────────────────────────────────────────────
 function ejecutarZoom(nombre, imgSrc, tipoZoom, tiempoMs) {
     if (!zoomImg || !zoomTexto || !zoomOverlay) return;
-    zoomImg.src = imgSrc; zoomTexto.textContent = nombre;
-
+    
+    if (zoomTimeout) {
+        clearTimeout(zoomTimeout);
+        zoomTimeout = null;
+    }
+    
+    zoomImg.src = imgSrc; 
+    zoomTexto.textContent = nombre;
+    
     const zoomCard = zoomOverlay.querySelector('.zoom-card');
     if (window.innerWidth > window.innerHeight) {
         if (zoomCard) {
@@ -211,14 +224,19 @@ function ejecutarZoom(nombre, imgSrc, tipoZoom, tiempoMs) {
         if (zoomCard) { zoomCard.style.border = ""; zoomCard.style.boxShadow = ""; }
     }
 
-    zoomOverlay.className = 'zoom-overlay'; zoomOverlay.classList.add('activo', tipoZoom);
-    setTimeout(() => { zoomOverlay.classList.remove('activo', tipoZoom); }, tiempoMs);
+    zoomOverlay.className = 'zoom-overlay'; 
+    zoomOverlay.classList.add('activo', tipoZoom);
+    
+    zoomTimeout = setTimeout(() => { 
+        zoomOverlay.classList.remove('activo', tipoZoom); 
+        zoomTimeout = null;
+    }, tiempoMs);
 }
 
 function actualizarMarcador() {
     const s1 = document.getElementById('score1'), s2 = document.getElementById('score2');
     if(s1) s1.textContent = scoreJ1; if(s2) s2.textContent = scoreJ2;
-
+    
     const contenedorMarcador = document.querySelector('.marcador');
     const divJ1 = document.getElementById('puntos-j1'), divJ2 = document.getElementById('puntos-j2');
 
@@ -229,26 +247,19 @@ function actualizarMarcador() {
             contenedorMarcador.className = 'marcador turno-j2'; divJ2.classList.add('activo-j2'); divJ1.classList.remove('activo-j1');
         }
     } else if (contenedorMarcador) {
-        // FIX 3: Limpia las clases de turno al volver a modo 1 jugador
         contenedorMarcador.className = 'marcador';
         if (divJ1) divJ1.classList.remove('activo-j1');
         if (divJ2) divJ2.classList.remove('activo-j2');
     }
 }
 
-// ───────────────────────────────────────────────
-// FIX 4: Solo existe UNA función verificarFinJuego (se eliminó la duplicada).
-// FIX 5: Se eliminaron los 'carta.onclick' redundantes que colisionaban con
-//        el addEventListener de voltearCarta. El zoom post-partida ya lo
-//        maneja voltearCarta() cuando juegoTerminado === true.
-// ───────────────────────────────────────────────
 function verificarFinJuego() {
     const totalParejasEncontradas = scoreJ1 + scoreJ2;
-
+    
     if (totalParejasEncontradas === 20) { 
         juegoTerminado = true; 
         clearInterval(intervaloTiempo); 
-
+        
         setTimeout(() => {
             if (modoJuego === 1) {
                 let mins = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
@@ -263,8 +274,6 @@ function verificarFinJuego() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // FIX 6: Ya NO llamamos arrancarJuegoNuevo() al cargar.
-    // El menú de inicio permanece visible hasta que el usuario elija modo.
     const btn1 = document.getElementById('btn-1jugador'), btn2 = document.getElementById('btn-2jugadores');
     if (btn1) btn1.addEventListener('click', () => iniciarConfiguracionModo(1));
     if (btn2) btn2.addEventListener('click', () => iniciarConfiguracionModo(2));
