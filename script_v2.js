@@ -25,7 +25,7 @@ let juegoTerminado = false;
 
 let cartasData = [], cartasVolteadas = [], bloqueado = false, modoJuego = 2, jugadorActivo = 1;
 let scoreJ1 = 0, scoreJ2 = 0, contadorIntentos = 0, tiempoSegundos = 0, intervaloTiempo = null, imagenesPrecargadas = [];
-let zoomTimeout = null; // ← FIX: evita que el timeout de la 1ra carta cierre el zoom de la 2da
+let zoomTimeout = null;
 
 const tablero = document.getElementById('tablero');
 const zoomOverlay = document.getElementById('zoomOverlay');
@@ -116,15 +116,25 @@ function iniciarTablero() {
 }
 
 function voltearCarta() {
-    // Modo post-partida: solo zoom, no jugar
+    // ═══════════════════════════════════════════════
+    // MODO POST-PARTIDA: zoom persistente sin cierre automático
+    // ═══════════════════════════════════════════════
     if (juegoTerminado) {
         if (zoomImg && zoomTexto && zoomOverlay) {
             zoomImg.src = this.querySelector('img').src; 
             zoomTexto.textContent = this.dataset.nombre;
+            
+            // Limpia cualquier cierre programado del zoom de partida
+            if (zoomTimeout) {
+                clearTimeout(zoomTimeout);
+                zoomTimeout = null;
+            }
+            
             zoomOverlay.className = 'zoom-overlay activo mirando-carta';
-            zoomOverlay.onclick = function() {
-                zoomOverlay.classList.remove('activo', 'mirando-carta');
-            };
+            
+            // El zoom NO se cierra al tocar el overlay.
+            // Solo se cierra al tocar otra carta o al reiniciar.
+            zoomOverlay.onclick = null;
         }
         return; 
     }
@@ -137,18 +147,11 @@ function voltearCarta() {
     this.classList.add('volteada'); 
     cartasVolteadas.push(this); 
     
-    // ───────────────────────────────────────────────
-    // FIX: El zoom ahora se ejecuta para AMBAS cartas, no solo la segunda.
-    // Antes estaba dentro del bloque 'if (cartasVolteadas.length === 2)',
-    // por eso la primera carta solo veía el efecto CSS 'ampliada-temporal'
-    // (pequeña, sin nombre, baja resolución).
-    // ───────────────────────────────────────────────
     const esPantallaChica = window.innerWidth <= 767 || window.innerHeight <= 480 || window.matchMedia("(orientation: landscape)").matches;
     
     if (esPantallaChica) {
         ejecutarZoom(this.dataset.nombre, this.querySelector('img').src, 'mirando-carta', 1800);
     } else {
-        // En escritorio retrato, mantenemos el efecto nativo de escala
         this.classList.add('ampliada-temporal');
         const cartaParaAchicar = this;
         setTimeout(() => { cartaParaAchicar.classList.remove('ampliada-temporal'); }, 2000);
@@ -193,11 +196,6 @@ function verificarCoincidencia() {
     }
 }
 
-// ───────────────────────────────────────────────
-// FIX: Se agregó zoomTimeout para limpiar el timer anterior.
-// Antes, el timeout de la 1ra carta (1800ms) podía cerrar el zoom
-// mientras la 2da carta o la animación de acierto todavía se mostraban.
-// ───────────────────────────────────────────────
 function ejecutarZoom(nombre, imgSrc, tipoZoom, tiempoMs) {
     if (!zoomImg || !zoomTexto || !zoomOverlay) return;
     
@@ -284,6 +282,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirm("¿Estás seguro de que querés abandonar y reiniciar el juego?")) {
                 juegoTerminado = false; 
                 clearInterval(intervaloTiempo);
+                
+                // ═══════════════════════════════════════════════
+                // Cierra el zoom persistente de post-partida
+                // ═══════════════════════════════════════════════
+                if (zoomOverlay) {
+                    zoomOverlay.classList.remove('activo', 'mirando-carta', 'acierto-pareja');
+                }
+                if (zoomTimeout) {
+                    clearTimeout(zoomTimeout);
+                    zoomTimeout = null;
+                }
+                
                 const pantallaModo = document.getElementById('pantalla-modo');
                 if (pantallaModo) pantallaModo.style.display = 'flex';
                 if (tablero) tablero.innerHTML = "";
