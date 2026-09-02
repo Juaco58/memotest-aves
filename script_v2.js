@@ -116,12 +116,12 @@ function iniciarTablero() {
 }
 
 function voltearCarta() {
-    // ═══════════════════════════════════════════════════════
-    // MODO POST-PARTIDA: zoom persistente que NO bloquea
-    // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════════
+    // MODO POST-PARTIDA: zoom persistente, click-through para ver otras cartas
+    // ═══════════════════════════════════════════════════════════════════════
     if (juegoTerminado) {
         if (zoomImg && zoomTexto && zoomOverlay) {
-            // Limpia cualquier cierre programado del zoom de partida
+            // Cancela cualquier cierre automático de la partida
             if (zoomTimeout) {
                 clearTimeout(zoomTimeout);
                 zoomTimeout = null;
@@ -132,13 +132,14 @@ function voltearCarta() {
             
             zoomOverlay.className = 'zoom-overlay activo mirando-carta';
             
-            // FIX CRÍTICO: El fondo del overlay deja pasar los clicks
-            // para que el jugador pueda tocar otras cartas detrás.
-            // La tarjeta ampliada sigue siendo interactiva.
+            // FIX CRÍTICO: Todo el overlay es click-through para que el jugador
+            // pueda tocar las cartas del tablero que están DEBAJO del zoom.
+            // La tarjeta ampliada es puramente visual, no bloquea clicks.
             zoomOverlay.style.pointerEvents = 'none';
             const zoomCard = zoomOverlay.querySelector('.zoom-card');
-            if (zoomCard) zoomCard.style.pointerEvents = 'auto';
+            if (zoomCard) zoomCard.style.pointerEvents = 'none';
             
+            // Desactivamos el cierre al tocar el overlay
             zoomOverlay.onclick = null;
         }
         return; 
@@ -292,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 juegoTerminado = false; 
                 clearInterval(intervaloTiempo);
                 
-                // Cierra el zoom persistente de post-partida y restaura pointer-events
+                // Cierra el zoom persistente de post-partida y restaura todo
                 if (zoomOverlay) {
                     zoomOverlay.classList.remove('activo', 'mirando-carta', 'acierto-pareja');
                     zoomOverlay.style.pointerEvents = '';
