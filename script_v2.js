@@ -32,9 +32,6 @@ const zoomOverlay = document.getElementById('zoomOverlay');
 const zoomImg = document.getElementById('zoomImg');
 const zoomTexto = document.getElementById('zoomTexto');
 
-// ───────────────────────────────────────────────
-// FIX: Precargamos los sonidos para evitar bloqueos del navegador
-// ───────────────────────────────────────────────
 const sndVoltear = new Audio('sonidos/voltear.mp3');
 sndVoltear.preload = 'auto';
 const sndAcierto = new Audio('sonidos/acierto.mp3');
@@ -127,7 +124,6 @@ function voltearCarta() {
     // ═══════════════════════════════════════════════════════════════════════
     if (juegoTerminado) {
         if (zoomImg && zoomTexto && zoomOverlay) {
-            // Cancela cualquier cierre automático de la partida
             if (zoomTimeout) {
                 clearTimeout(zoomTimeout);
                 zoomTimeout = null;
@@ -138,18 +134,13 @@ function voltearCarta() {
             
             zoomOverlay.className = 'zoom-overlay activo mirando-carta';
             
-            // FIX CRÍTICO 1: Usamos !important para asegurar que el overlay
-            // deje pasar los clicks a las cartas del tablero que están debajo.
-            // La tarjeta ampliada es puramente visual, no bloquea clicks.
+            // El overlay y su tarjeta son puramente visuales, no bloquean clicks
             zoomOverlay.style.setProperty('pointer-events', 'none', 'important');
-            
-            // FIX CRÍTICO 2: La tarjeta dentro del zoom también debe dejar pasar clicks
             const zoomCard = zoomOverlay.querySelector('.zoom-card');
             if (zoomCard) {
                 zoomCard.style.setProperty('pointer-events', 'none', 'important');
             }
             
-            // Desactivamos el cierre al tocar el overlay
             zoomOverlay.onclick = null;
         }
         return; 
@@ -182,17 +173,10 @@ function voltearCarta() {
 function verificarCoincidencia() {
     const [carta1, carta2] = cartasVolteadas;
     if (carta1.dataset.nombre === carta2.dataset.nombre) {
-        // ───────────────────────────────────────────────
-        // FIX: Reproducimos el sonido de forma robusta.
-        // Algunos navegadores móviles bloquean audio que no viene
-        // directamente de un click; como estamos en la cadena del click
-        // de la 2da carta, forzamos la reproducción inmediata.
-        // ───────────────────────────────────────────────
         sndAcierto.currentTime = 0;
         const playPromise = sndAcierto.play();
         if (playPromise !== undefined) {
             playPromise.catch(() => {
-                // Si el navegador bloquea, intentamos de nuevo tras un microtask
                 setTimeout(() => {
                     sndAcierto.currentTime = 0;
                     sndAcierto.play().catch(() => {});
@@ -295,6 +279,16 @@ function verificarFinJuego() {
         juegoTerminado = true; 
         clearInterval(intervaloTiempo); 
         
+        // ═══════════════════════════════════════════════════════════════════════
+        // FIX CRÍTICO: Las cartas con clase .acertada suelen tener
+        // pointer-events: none en el CSS para evitar clicks durante la partida.
+        // Al terminar el juego, forzamos pointer-events: auto para que el
+        // jugador pueda clickearlas y activar el zoom post-partida.
+        // ═══════════════════════════════════════════════════════════════════════
+        document.querySelectorAll('.carta').forEach(carta => {
+            carta.style.setProperty('pointer-events', 'auto', 'important');
+        });
+        
         setTimeout(() => {
             if (modoJuego === 1) {
                 let mins = String(Math.floor(tiempoSegundos / 60)).padStart(2, '0');
@@ -320,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 juegoTerminado = false; 
                 clearInterval(intervaloTiempo);
                 
-                // Cierra el zoom persistente de post-partida y restaura todo
                 if (zoomOverlay) {
                     zoomOverlay.classList.remove('activo', 'mirando-carta', 'acierto-pareja');
                     zoomOverlay.style.setProperty('pointer-events', '', '');
