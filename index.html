@@ -283,6 +283,16 @@
             .then(reg => console.log('Service Worker registrado con éxito', reg))
             .catch(err => console.warn('Error al registrar el Service Worker', err));
     }
+
+// --- PARCHE DEFINITIVO PARA CERRAR EL ZOOM PICANDO AFUERA ---
+        document.getElementById('zoomOverlay').addEventListener('click', function(evento) {
+            if (evento.target === this) {
+                this.style.display = 'none'; 
+                this.classList.remove('active'); 
+                this.classList.remove('show');   
+            }
+        });
+
     </script>
  <!-- 🧪 ESTE BOTÓN QUEDA INACTIVO POR SI LO NECESITO EN EL FUTURO:
 <button onclick="juegoTerminado = true; alert('¡Modo galería activado! Toca cualquier carta')" style="position: fixed; top: 10px; left: 10px; z-index: 1000000; padding: 10px; background: red; color: white; border: none; border-radius: 5px; cursor: pointer;">

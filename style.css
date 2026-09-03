@@ -351,3 +351,22 @@ h1 {
     }
 }
 
+/* --- PARCHE PARA EL ZOOM DE LAS AVES --- */
+
+/* Esta capa actúa como un vidrio oscuro sobre las cartas. Atrapa los clics y no los deja pasar atrás */
+.zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo un 60% para que el ave resalte hermoso */
+    z-index: 9998; /* Se posiciona por encima de todas las cartas del tablero */
+    cursor: pointer; /* Cambia el cursor a una manito para indicar que se puede hacer clic para cerrar */
+}
+
+/* Forzamos a que la imagen gigante del ave quede por encima de la capa protectora */
+.ave-gigante-zoom { 
+    position: fixed;
+    z-index: 9999 !important; /* Un nivel más arriba que el overlay */
+}
