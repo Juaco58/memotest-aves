@@ -150,6 +150,8 @@ function voltearCarta(e) {
             // Limpiamos inline-styles viejos que podrían interferir
             zoomOverlay.style.setProperty('pointer-events', '', '');
             zoomOverlay.onclick = null;
+            const zcZoom = zoomOverlay.querySelector('.zoom-card');
+            if (zcZoom) zcZoom.style.setProperty('pointer-events', '', '');
             
             // Evita que este mismo click dispare el listener global
             // y cierre el zoom inmediatamente al abrirlo
@@ -248,16 +250,12 @@ function ejecutarZoom(nombre, imgSrc, tipoZoom, tiempoMs) {
             }
         }
     } else {
-        if (zoomCard) { zoomCard.style.border = ""; zoomCard.style.boxShadow = ""; }
+        if (zoomCard) { zoomCard.style.removeProperty('border'); zoomCard.style.removeProperty('box-shadow'); }
     }
 
     zoomOverlay.className = 'zoom-overlay'; 
     zoomOverlay.classList.add('activo', tipoZoom);
-    
-    // Durante la partida el overlay captura clicks normalmente
-    zoomOverlay.style.setProperty('pointer-events', '', '');
-    if (zoomCard) zoomCard.style.setProperty('pointer-events', '', '');
-    
+    // FIX: durante la partida el overlay NO captura clicks (CSS lo pasa al tablero)
     zoomTimeout = setTimeout(() => { 
         zoomOverlay.classList.remove('activo', tipoZoom); 
         zoomTimeout = null;
@@ -363,6 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     zoomOverlay.className = 'zoom-overlay';
                     zoomOverlay.style.setProperty('pointer-events', '', '');
                     zoomOverlay.onclick = null;
+                    const zcReset = zoomOverlay.querySelector('.zoom-card');
+                    if (zcReset) zcReset.style.setProperty('pointer-events', '', '');
                 }
                 if (zoomTimeout) {
                     clearTimeout(zoomTimeout);

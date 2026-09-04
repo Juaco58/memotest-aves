@@ -86,7 +86,6 @@ h1 {
     transform-style: preserve-3d;
     transition: transform 0.5s, opacity 0.5s, visibility 0.5s, z-index 0.5s;
     cursor: pointer;
-    touch-action: manipulation; /* Optimiza el toque táctil en verticales */
 }
 
 .carta.volteada {
@@ -127,12 +126,13 @@ h1 {
     padding: 5px;
 }
 
+/* MODIFICALO PARA QUE QUEDE ASÍ: */
 .frente img {
     width: 100%;
     height: 75%;
     object-fit: cover;
     border-radius: 4px;
-    image-rendering: auto; 
+    image-rendering: smooth; /* Comportamiento premium estándar */
 }
 
 .frente span {
@@ -168,8 +168,20 @@ h1 {
     pointer-events: auto;
 }
 
+/* ==========================================================
+   FIX VERTICAL: el overlay de zoom NUNCA debe interceptar
+   los toques durante la partida. Si lo hace, el toque de la
+   SEGUNDA carta se pierde -> la primera queda dada vuelta
+   sola (carta "trabada") y el zoom parece "fallar".
+   ========================================================== */
+.zoom-overlay.activo:not(.modo-post-partida),
+.zoom-overlay.activo:not(.modo-post-partida) .zoom-card {
+    pointer-events: none !important;
+}
+
+
 .zoom-card {
-    position: relative;        
+    position: relative;        /* ← AGREGAR ESTA LÍNEA */
     background: white;
     padding: 20px;
     border-radius: 12px;
@@ -185,12 +197,15 @@ h1 {
     transform: scale(1);
 }
 
+/* MODIFICALO PARA QUE QUEDE ASÍ: */
 .zoom-card img {
     max-width: 100%;
     max-height: 60vh;
     object-fit: contain;
     border-radius: 8px;
+    image-rendering: smooth; /* Mantiene la nitidez nativa de la IA */
 }
+
 
 .zoom-card h2 {
     margin-top: 15px;
@@ -224,11 +239,15 @@ h1 {
     transform: scale(3.2) rotateY(180deg) !important;
     z-index: 50;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    
+    /* Corrige el estirado de píxeles en Firefox durante la lupa */
     will-change: transform;
+    image-rendering: -moz-crisp-edges;
 }
 
 /* RESPONSIVE: Configuración para Celulares / Pantallas Verticales */
 @media (max-width: 767px) {
+    /* Cambia automáticamente a 5 columnas x 8 filas */
     .tablero { 
         grid-template-columns: repeat(5, 1fr);
         gap: 6px; 
@@ -243,33 +262,33 @@ h1 {
         padding: 8px 16px; 
     }
 
-    /* CORREGIDO: En vertical hace un zoom moderado (1.5) para que se lea sin desbordar el teléfono */
+    /* Desactivamos por completo el zoom individual que rompía los bordes en el celu */
     .carta.ampliada-temporal {
-        transform: scale(1.5) rotateY(180deg) !important;
-        z-index: 99;
+        transform: rotateY(180deg) !important;
     }
 
+    /* Nuevo estilo para cuando se mira una sola carta en el centro (sin fondo oscuro) */
     .zoom-overlay.mirando-carta {
-        background: rgba(0, 0, 0, 0.2); 
+        background: rgba(0, 0, 0, 0.2); /* Fondo apenas perceptible para no confundir con acierto */
     }
 
     .zoom-overlay.mirando-carta .zoom-card {
-        transform: scale(0.85); 
-        border: 3px solid #34495e; 
+        transform: scale(0.85); /* Tamaño más moderado para observar */
+        border: 3px solid #34495e; /* Marco neutro de observación */
     }
     
+    /* Estilo exclusivo para cuando se ACERTA la pareja (festejo imponente) */
     .zoom-overlay.acierto-pareja {
-        background: rgba(0, 0, 0, 0.85); 
+        background: rgba(0, 0, 0, 0.85); /* Fondo oscuro total de victoria */
     }
 
     .zoom-overlay.acierto-pareja .zoom-card {
-        transform: scale(1.1); 
-        border: 4px solid #f1c40f; 
+        transform: scale(1.1); /* Tarjeta gigante de festejo */
+        border: 4px solid #f1c40f; /* Marco dorado brillante */
         box-shadow: 0 0 30px rgba(241, 196, 15, 0.6);
     }
 }
-
-/* Barra de estado superior */
+/* Barra de estado superior ultra compacta */
 .barra-contadores {
   display: flex;
   justify-content: space-around;
@@ -284,7 +303,7 @@ h1 {
   z-index: 10;
 }
 
-/* Selección de Modo */
+/* Pantalla de Selección de Modo (1 o 2 jugadores) */
 .pantalla-modo {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -295,7 +314,6 @@ h1 {
   align-items: center;
   z-index: 99;
 }
-
 .btn-modo {
   padding: 15px 30px;
   margin: 10px;
@@ -308,15 +326,13 @@ h1 {
   font-weight: bold;
 }
 
-/* Cartas ACERTADAS */
+/* Efecto para cartas ACERTADAS (se quedan fijas en su lugar) */
 .carta.acertada {
-  pointer-events: none; 
-  border: 3px solid #4caf50; 
-  transform: scale(0.98);    
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+  pointer-events: none; /* Ya no se pueden tocar */
+  border: 3px solid #4caf50; /* Un marco verde sutil que indica acierto */
+  transform: scale(0.98);    /* Un toque apenas más chicas para dar efecto de encajadas */
 }
-
+/* Fuerza a que la carta muestre el frente si ya fue acertada */
 .carta.acertada .cara.reverso {
     transform: rotateY(180deg) !important;
 }
@@ -325,18 +341,44 @@ h1 {
     transform: rotateY(0deg) !important;
 }
 
-/* MODO POST-PARTIDA */
+/* Las cartas se quedan fijas, nítidas y con su marco verde */
+.carta.acertada {
+    pointer-events: none; /* Bloquea los clicks */
+    border: 3px solid #4caf50; /* Marco verde sutil de acierto */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3); /* Un brillito verde abajo */
+}
+/* =======================================================
+   PARCHE GRÁFICO SEGURO EXCLUSIVO PARA FIREFOX EN PC 
+   (No toca el script.js y respeta a Chrome, Edge y Celus)
+   ======================================================= */
+@-moz-document url-prefix() {
+    .zoom-card img {
+        /* Fuerza a la placa de video a recalcular la textura en 3D */
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+        
+        /* Ajuste de interpolación de imagen nativo de Mozilla */
+        image-rendering: -moz-crisp-edges;
+    }
+}
+
+/* ============================================
+   MODO POST-PARTIDA: Zoom ligero y cerrable
+   ============================================ */
 .zoom-overlay.modo-post-partida {
-    background: rgba(0, 0, 0, 0.2);   
-    pointer-events: none !important;   
+    background: rgba(0, 0, 0, 0.2);   /* Fondo apenas perceptible */
+    pointer-events: none !important;   /* Deja clickear el tablero debajo */
 }
 
 .zoom-overlay.modo-post-partida .zoom-card {
-    pointer-events: auto;             
+    pointer-events: auto;             /* La tarjeta SÍ captura el mouse */
     position: relative;
     transform: scale(0.9);
 }
 
+/* Por defecto: la X está oculta (el zoom se cierra solo durante la partida) */
 .btn-cerrar-zoom {
     display: none;
     position: absolute;
@@ -362,6 +404,7 @@ h1 {
     padding-bottom: 2px;
 }
 
+/* Solo en modo post-partida: se muestra la X */
 .zoom-overlay.modo-post-partida .btn-cerrar-zoom {
     display: flex;
 }
