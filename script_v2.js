@@ -127,7 +127,7 @@ function iniciarTablero() {
     });
 }
 
-function voltearCarta() {
+function voltearCarta(e) {
     // ═══════════════════════════════════════════════════════════════════════
     // MODO POST-PARTIDA: zoom persistente, click-through para ver otras cartas
     // ═══════════════════════════════════════════════════════════════════════
@@ -143,17 +143,17 @@ function voltearCarta() {
             zoomImg.src = this.querySelector('img').src; 
             zoomTexto.textContent = this.dataset.nombre;
             
-            // Muestra el overlay usando las clases CSS (limpia primero)
+            // Muestra el overlay en modo post-partida (fondo transparente, cerrable)
             zoomOverlay.className = 'zoom-overlay';
-            zoomOverlay.classList.add('activo', 'mirando-carta');
+            zoomOverlay.classList.add('activo', 'modo-post-partida');
             
-            // FIX CRÍTICO: El overlay debe ser visible pero NO capturar clicks,
-            // para que el jugador pueda tocar las cartas del tablero debajo.
-            // Usamos setProperty con !important para anular .zoom-overlay.activo { pointer-events: auto }
-            zoomOverlay.style.setProperty('pointer-events', 'none', 'important');
-            
-            // Desactivamos el cierre al tocar el overlay
+            // Limpiamos inline-styles viejos que podrían interferir
+            zoomOverlay.style.setProperty('pointer-events', '', '');
             zoomOverlay.onclick = null;
+            
+            // Evita que este mismo click dispare el listener global
+            // y cierre el zoom inmediatamente al abrirlo
+            e.stopPropagation();
         }
         return; 
     }
@@ -318,6 +318,40 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn1) btn1.addEventListener('click', () => iniciarConfiguracionModo(1));
     if (btn2) btn2.addEventListener('click', () => iniciarConfiguracionModo(2));
 
+    /* ─── CREAR BOTÓN X EN LA TARJETA DE ZOOM ─── */
+    const zoomCard = document.querySelector('.zoom-card');
+    if (zoomCard && !document.getElementById('btn-cerrar-zoom')) {
+        const btnX = document.createElement('button');
+        btnX.id = 'btn-cerrar-zoom';
+        btnX.className = 'btn-cerrar-zoom';
+        btnX.innerHTML = '&times;';
+        btnX.setAttribute('aria-label', 'Cerrar zoom');
+        btnX.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (zoomOverlay) {
+                zoomOverlay.classList.remove('activo', 'modo-post-partida', 'mirando-carta', 'acierto-pareja');
+            }
+        });
+        zoomCard.appendChild(btnX);
+    }
+
+    /* ─── CERRAR ZOOM AL TOCAR FUERA DE LA TARJETA ─── */
+    document.addEventListener('click', (e) => {
+        if (!juegoTerminado) return;
+        if (!zoomOverlay || !zoomOverlay.classList.contains('activo')) return;
+        if (!zoomOverlay.classList.contains('modo-post-partida')) return;
+
+        const zCard = zoomOverlay.querySelector('.zoom-card');
+        // Si tocó dentro de la tarjeta (incluido el botón X), no cerrar
+        if (zCard && zCard.contains(e.target)) return;
+
+        // Si tocó otra carta del tablero, no cerrar aquí (voltearCarta la reemplaza)
+        if (e.target.closest('.carta')) return;
+
+        // Cerrar: tocó el fondo, el botón Reiniciar, o cualquier otro lado
+        zoomOverlay.classList.remove('activo', 'modo-post-partida', 'mirando-carta', 'acierto-pareja');
+    });
+
     const btnReiniciar = document.getElementById('btn-reiniciar');
     if (btnReiniciar) {
         btnReiniciar.addEventListener('click', () => {
@@ -325,7 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 juegoTerminado = false; 
                 clearInterval(intervaloTiempo);
                 
-                // Cierra el zoom persistente de post-partida y restaura todo
                 if (zoomOverlay) {
                     zoomOverlay.className = 'zoom-overlay';
                     zoomOverlay.style.setProperty('pointer-events', '', '');
