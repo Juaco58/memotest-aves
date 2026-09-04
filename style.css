@@ -366,12 +366,13 @@ h1 {
     transform: scale(0.9);
 }
 
-/* Botón X para cerrar el zoom */
+/* Por defecto: la X está oculta (el zoom se cierra solo durante la partida) */
 .btn-cerrar-zoom {
+    display: none;
     position: absolute;
-    top: -12px;                /* Antes era -18px, ahora asoma poquito */
+    top: -12px;
     right: -12px;
-    width: 30px;               /* Un toque más chico para no tapar */
+    width: 30px;
     height: 30px;
     background: #e74c3c;
     color: white;
@@ -381,7 +382,6 @@ h1 {
     font-weight: bold;
     line-height: 1;
     cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 3px 10px rgba(0,0,0,0.4);
@@ -390,6 +390,11 @@ h1 {
     transition: transform 0.15s ease, background 0.2s;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-bottom: 2px;
+}
+
+/* Solo en modo post-partida: se muestra la X */
+.zoom-overlay.modo-post-partida .btn-cerrar-zoom {
+    display: flex;
 }
 
 .btn-cerrar-zoom:hover {
