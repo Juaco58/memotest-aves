@@ -28,8 +28,14 @@ const baseDeAnimales = [
     { nombre: "Espátula Rosada", img: "imagenes/espatula_rosada.jpg" }, { nombre: "Garza Blanca", img: "imagenes/garza_blanca.jpg" }, { nombre: "Tacuarita Azul", img: "imagenes/tacuarita_azul.jpg" }, 
     { nombre: "Ratonera", img: "imagenes/ratonera.jpg" }, { nombre: "Tordo Renegrido", img: "imagenes/tordo_renegrido.jpg" }, { nombre: "Chinchero Grande", img: "imagenes/chinchero_grande.jpg" }, 
     { nombre: "Ñandú petiso", img: "imagenes/ñandu_petiso.jpg" }, { nombre: "Loro Hablador", img: "imagenes/loro_hablador.jpg" }
+    { nombre: "Cabecita Negra", img: "imagenes/cabecita_negra.jpg" }, { nombre: "Cacique Ala Amarilla", img: "imagenes/cacique_ala_amarilla.jpg" }, 
+    { nombre: "Carpintero Bataraz Chico", img: "imagenes/carpintero_bataraz_chico.jpg" }, { nombre: "Cisne Coscoroba", img: "imagenes/cisne_coscoroba.jpg" },
+    { nombre: "Corbatita", img: "imagenes/corbatita.jpg" }, { nombre: "Gallareta Escudete Rojo", img: "imagenes/gallareta_escudete_rojo.jpg" },
+    { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzon del Campo", img: "imagenes/lechuzón_del_campo.jpg" },
+    { nombre: "Pato Maicero", img: "imagenes/pato_maicero.jpg" }, { nombre: "Picabuey", img: "imagenes/picabuey.jpg" }, { nombre: "Pirincha", img: "imagenes/pirincha.jpg" },
+    { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdon", img: "imagenes/verdon.jpg" }
 ];
-
+  
 let juegoTerminado = false;
 
 let cartasData = [], cartasVolteadas = [], bloqueado = false, modoJuego = 2, jugadorActivo = 1;
