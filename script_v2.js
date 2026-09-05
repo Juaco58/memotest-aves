@@ -31,7 +31,7 @@ const baseDeAnimales = [
     { nombre: "Cabecita Negra", img: "imagenes/cabecita_negra.jpg" }, { nombre: "Cacique Ala Amarilla", img: "imagenes/cacique_ala_amarilla.jpg" }, 
     { nombre: "Carpintero Bataraz Chico", img: "imagenes/carpintero_bataraz_chico.jpg" }, { nombre: "Cisne Coscoroba", img: "imagenes/cisne_coscoroba.jpg" },
     { nombre: "Corbatita", img: "imagenes/corbatita.jpg" }, { nombre: "Gallareta Escudete Rojo", img: "imagenes/gallareta_escudete_rojo.jpg" },
-    { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzon del Campo", img: "imagenes/lechuzón_del_campo.jpg" },
+    { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzon del Campo", img: "imagenes/lechuzon_del_campo.jpg" },
     { nombre: "Pato Maicero", img: "imagenes/pato_maicero.jpg" }, { nombre: "Picabuey", img: "imagenes/picabuey.jpg" }, { nombre: "Pirincha", img: "imagenes/pirincha.jpg" },
     { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdon", img: "imagenes/verdon.jpg" }
 ];
