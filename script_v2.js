@@ -33,7 +33,9 @@ const baseDeAnimales = [
     { nombre: "Corbatita", img: "imagenes/corbatita.jpg" }, { nombre: "Gallareta Escudete Rojo", img: "imagenes/gallareta_escudete_rojo.jpg" },
     { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzon del Campo", img: "imagenes/lechuzon_del_campo.jpg" },
     { nombre: "Pato Maicero", img: "imagenes/pato_maicero.jpg" }, { nombre: "Picabuey", img: "imagenes/picabuey.jpg" }, { nombre: "Pirincha", img: "imagenes/pirincha.jpg" },
-    { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdon", img: "imagenes/verdon.jpg" }
+    { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdon", img: "imagenes/verdon.jpg" },
+    { nombre: "Picaflor Común", img: "imagenes/picaflor_comun.jpg" }, { nombre: "Brasita de Fuego", img: "imagenes/brasita_de_fuego.jpg" }, 
+    { nombre: "Jilguero Dorado", img: "imagenes/jilguero_dorado.jpg" }, { nombre: "Zorzal Colorado", img: "imagenes/zorzal_colorado.jpg" }
 ];
   
 let juegoTerminado = false;
