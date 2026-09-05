@@ -27,7 +27,7 @@ const baseDeAnimales = [
     { nombre: "Águila Mora", img: "imagenes/aguila_mora.jpg" }, { nombre: "Bailarín Azul", img: "imagenes/bailarin_azul.jpg" }, { nombre: "Bandurria Austral", img: "imagenes/bandurria_austral.jpg" },
     { nombre: "Espátula Rosada", img: "imagenes/espatula_rosada.jpg" }, { nombre: "Garza Blanca", img: "imagenes/garza_blanca.jpg" }, { nombre: "Tacuarita Azul", img: "imagenes/tacuarita_azul.jpg" }, 
     { nombre: "Ratonera", img: "imagenes/ratonera.jpg" }, { nombre: "Tordo Renegrido", img: "imagenes/tordo_renegrido.jpg" }, { nombre: "Chinchero Grande", img: "imagenes/chinchero_grande.jpg" }, 
-    { nombre: "Ñandú petiso", img: "imagenes/ñandu_petiso.jpg" }, { nombre: "Loro Hablador", img: "imagenes/loro_hablador.jpg" }
+    { nombre: "Ñandú petiso", img: "imagenes/ñandu_petiso.jpg" }, { nombre: "Loro Hablador", img: "imagenes/loro_hablador.jpg" },
     { nombre: "Cabecita Negra", img: "imagenes/cabecita_negra.jpg" }, { nombre: "Cacique Ala Amarilla", img: "imagenes/cacique_ala_amarilla.jpg" }, 
     { nombre: "Carpintero Bataraz Chico", img: "imagenes/carpintero_bataraz_chico.jpg" }, { nombre: "Cisne Coscoroba", img: "imagenes/cisne_coscoroba.jpg" },
     { nombre: "Corbatita", img: "imagenes/corbatita.jpg" }, { nombre: "Gallareta Escudete Rojo", img: "imagenes/gallareta_escudete_rojo.jpg" },
