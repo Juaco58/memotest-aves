@@ -31,11 +31,13 @@ const baseDeAnimales = [
     { nombre: "Cabecita Negra", img: "imagenes/cabecita_negra.jpg" }, { nombre: "Cacique Ala Amarilla", img: "imagenes/cacique_ala_amarilla.jpg" }, 
     { nombre: "Carpintero Bataraz Chico", img: "imagenes/carpintero_bataraz_chico.jpg" }, { nombre: "Cisne Coscoroba", img: "imagenes/cisne_coscoroba.jpg" },
     { nombre: "Corbatita", img: "imagenes/corbatita.jpg" }, { nombre: "Gallareta Escudete Rojo", img: "imagenes/gallareta_escudete_rojo.jpg" },
-    { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzon del Campo", img: "imagenes/lechuzon_del_campo.jpg" },
-    { nombre: "Pato Maicero", img: "imagenes/pato_maicero.jpg" }, { nombre: "Picabuey", img: "imagenes/picabuey.jpg" }, { nombre: "Pirincha", img: "imagenes/pirincha.jpg" },
-    { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdon", img: "imagenes/verdon.jpg" },
+    { nombre: "Lechuza de los Campanarios", img: "imagenes/lechuza_de_los_campanarios.jpg" }, { nombre: "Lechuzón del Campo", img: "imagenes/lechuzon_del_campo.jpg" },
+    { nombre: "Pato Maicero", img: "imagenes/pato_maicero.jpg" }, { nombre: "Picabuey", img: "imagenes/picabuey.jpg" }, { nombre: "Pirincho", img: "imagenes/pirincha.jpg" },
+    { nombre: "Pollona Negra", img: "imagenes/pollona_negra.jpg" }, { nombre: "Reina Mora", img: "imagenes/reina_mora.jpg" }, { nombre: "Verdón", img: "imagenes/verdon.jpg" },
     { nombre: "Picaflor Común", img: "imagenes/picaflor_comun.jpg" }, { nombre: "Brasita de Fuego", img: "imagenes/brasita_de_fuego.jpg" }, 
     { nombre: "Jilguero Dorado", img: "imagenes/jilguero_dorado.jpg" }, { nombre: "Zorzal Colorado", img: "imagenes/zorzal_colorado.jpg" }
+    { nombre: "Yabirú", img: "imagenes/yabiru.jpg" }, { nombre: "Perdiz Colorada", img: "imagenes/perdiz_colorada.jpg" }, { nombre: "Mirasol común", img: "imagenes/mirasol_comun.jpg" },
+    { nombre: "Martín Pescador Grande", img: "imagenes/martin_pescador_grande.jpg" }, { nombre: "Gaviota Capucho Gris", img: "imagenes/gaviota_capucho_gris.jpg" }, { nombre: "Chuña Real", img: "imagenes/chuña_real.jpg" }
 ];
   
 let juegoTerminado = false;
