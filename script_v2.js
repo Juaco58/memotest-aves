@@ -37,7 +37,7 @@ const baseDeAnimales = [
     { nombre: "Picaflor Común", img: "imagenes/picaflor_comun.jpg" }, { nombre: "Brasita de Fuego", img: "imagenes/brasita_de_fuego.jpg" }, 
     { nombre: "Jilguero Dorado", img: "imagenes/jilguero_dorado.jpg" }, { nombre: "Zorzal Colorado", img: "imagenes/zorzal_colorado.jpg" },
     { nombre: "Yabirú", img: "imagenes/yabiru.jpg" }, { nombre: "Perdiz Colorada", img: "imagenes/perdiz_colorada.jpg" }, { nombre: "Mirasol común", img: "imagenes/mirasol_comun.jpg" },
-    { nombre: "Martín Pescador Grande", img: "imagenes/martin_pescador_grande.jpg" }, { nombre: "Gaviota Capucho Gris", img: "imagenes/gaviota_capucho_gris.jpg" }, { nombre: "Chuña Real", img: "imagenes/chuña_real.jpg" }
+    { nombre: "Martín Pescador Grande", img: "imagenes/martín_pescador_grande.jpg" }, { nombre: "Gaviota Capucho Gris", img: "imagenes/gaviota_capucho_gris.jpg" }, { nombre: "Chuña Real", img: "imagenes/chuña_real.jpg" }
 ];
   
 let juegoTerminado = false;
