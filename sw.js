@@ -1,7 +1,7 @@
 // ==========================================
-// 🚀 SERVICE WORKER: AVES DE ARGENTINA (v130)
+// 🚀 SERVICE WORKER: AVES DE ARGENTINA (v131)
 // ==========================================
-const CACHE_NAME = 'aves-v130';
+const CACHE_NAME = 'aves-v131';
 
 const assets = [
   '/',
